@@ -8,8 +8,9 @@
     "allowJs": true,
     "moduleResolution": "node",
     "strict": false,
-    "allowSyntheticDefaultImports": true
-  }
-  // "include": ["src/**/*.ts"],
-  // "exclude": ["node_modules"]
+    "allowSyntheticDefaultImports": true,
+    "declaration": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
