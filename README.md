@@ -35,6 +35,20 @@ klipSDK.getResult(...)
 klipSDK.getCardList(...)
 ```
 
+## Example 실행
+
+parcel 추가
+
+```
+npm install -g parcel-bundler
+```
+
+예제 실행
+
+```
+npm run example
+```
+
 ## API
 
 ### 개요
