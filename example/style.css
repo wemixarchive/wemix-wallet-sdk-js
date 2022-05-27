@@ -1,0 +1,19 @@
+.mainDiv {
+  padding: 20px;
+}
+
+button {
+  height: 20px;
+  line-height: 0;
+}
+
+.mainBtn {
+  margin-right: 10px;
+}
+
+.closeDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}

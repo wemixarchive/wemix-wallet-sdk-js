@@ -1,6 +1,19 @@
-import { auth } from "../src/components/auth";
-import { getResult } from "../src/components/getResult";
+import wemixSDK from "../src/index";
 import QRCode from "../node_modules/qrcode/lib";
+
+// HTML DOM 객체
+var authBtn = document.getElementById("auth");
+var wemixBtn = document.getElementById("wemix_send");
+var tokenBtn = document.getElementById("token_send");
+var nftBtn = document.getElementById("nft_send");
+var contractBtn = document.getElementById("contract_execute");
+
+var qrContent = document.getElementById("qrcode_content");
+var qrCanvas = document.getElementById("qrcode");
+var qrDialog = document.getElementById("qrcode_popup");
+var dialogBtn = document.getElementById("qrCloseBtn");
+
+var walletAddress = document.getElementById("wallet_address");
 
 // 요청하는 앱의 서비스 정보
 var meta = {
@@ -8,34 +21,37 @@ var meta = {
   description: "JS SDK 테스트 요청",
 };
 
-var dialog = document.getElementById("qrcode_popup");
-
 /**
  * WeMix Wallet 에서 인증 완료시 까지 대기
  */
 function responseWait(requestId, completed) {
+  const clearFunc = () => {
+    clearInterval(timer);
+    qrDialog.close();
+  };
+
   var timer = setInterval(() => {
-    getResult(requestId).then((res) => {
-      if (res.status === "completed") {
-        clearInterval(timer);
-        dialog.close();
+    wemixSDK.getResult(requestId).then((res) => {
+      if (res.error) {
+        clearFunc();
+        alert("Error: " + res.error);
+        return;
+      }
 
-        completed(res);
-      } else if (res.status === "canceled") {
-        clearInterval(timer);
-        dialog.close();
-
-        alert("사용자 취소");
-      } else if (res.status === "expired") {
-        clearInterval(timer);
-        dialog.close();
-
-        alert("만료");
-      } else if (res.error) {
-        clearInterval(timer);
-        dialog.close();
-
-        alert("에러 : " + res.error);
+      switch (res.status) {
+        case "proposal":
+          break;
+        case "completed":
+          clearFunc();
+          completed(res);
+          break;
+        case "canceled":
+          clearFunc();
+          alert("사용자 취소");
+          break;
+        case "expired":
+          clearFunc();
+          alert("만료");
       }
     });
   }, 1000);
@@ -46,23 +62,31 @@ function responseWait(requestId, completed) {
  */
 function showQRCode(requestId) {
   var content = "wemix://wallet?requestId=" + requestId;
-  document.getElementById("qrcode_content").textContent = content;
-  QRCode.toCanvas(document.getElementById("qrcode"), content);
-
-  dialog.showModal();
+  qrContent.innerText = content;
+  QRCode.toCanvas(qrCanvas, content);
+  console.log(1);
+  qrDialog.showModal();
 }
 
 // 지갑 연결
-document.getElementById("auth").onclick = function () {
+function authHandler() {
   // 인증 요청
-  auth(meta).then((res) => {
+  wemixSDK.auth(meta).then((res) => {
     // QRCODE
     showQRCode(res.requestId);
 
     // 인증 대기
     responseWait(res.requestId, function (response) {
-      document.getElementById("wallet_address").textContent = response.address;
+      walletAddress.innerText = response.address;
       alert("지갑 연결 완료");
     });
   });
-};
+}
+
+function dialogClose() {
+  qrDialog.close();
+}
+
+authBtn.addEventListener("click", authHandler);
+
+dialogBtn.addEventListener("click", dialogClose);

@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>wemix-wallet-sdk-js sample</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Lato:400,900"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  </head>
-  <body>
-    <p><button id="auth">지갑연결</button></p>
-    <p><button id="wemix_send">Wemix 전송 요청</button></p>
-    <p><button id="token_send">Token 전송 요청</button></p>
-    <p><button id="nft_send">NFT 전송 요청</button></p>
-    <p><button id="contract_execute">Contract 실행 요청</button></p>
-    <br/>
-    <br/>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>wemix-wallet-sdk-js sample</title>
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+  <div class="mainDiv">
+    <button id="auth" class="mainBtn">지갑연결</button>
+    <button id="wemix_send" class="mainBtn">Wemix 전송 요청</button>
+    <button id="token_send" class="mainBtn">Token 전송 요청</button>
+    <button id="nft_send" class="mainBtn">NFT 전송 요청</button>
+    <button id="contract_execute" class="mainBtn">Contract 실행 요청</button>
+    <br />
+    <br />
     <p>연결된 지갑 주소 : <span id="wallet_address"></span></p>
 
     <dialog id="qrcode_popup">
       <canvas id="qrcode" style="display: block; margin: 0 auto;"></canvas>
-      <p><div id="qrcode_content"></div></p>
+      <div id="qrcode_content"></div>
+      <div class="closeDiv">
+        <button id="qrCloseBtn">닫기</button>
+      </div>
     </dialog>
+  </div>
 
-    <script src="./index.js"></script>
-  </body>
+  <script src="./index.js"></script>
+</body>
+
 </html>
