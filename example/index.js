@@ -8,48 +8,61 @@ var meta = {
   description: "JS SDK 테스트 요청",
 };
 
+var dialog = document.getElementById("qrcode_popup");
+
 /**
  * WeMix Wallet 에서 인증 완료시 까지 대기
  */
-function responseWait(requestType, requestId) {
+function responseWait(requestId, completed) {
   var timer = setInterval(() => {
     getResult(requestId).then((res) => {
       if (res.status === "completed") {
         clearInterval(timer);
+        dialog.close();
 
-        if (requestType === "auth") {
-          document.getElementById("wallet_address").textContent = res.address;
-          alert("지갑 연결 완료");
-        }
+        completed(res);
       } else if (res.status === "canceled") {
         clearInterval(timer);
-        alert("사용자취소");
+        dialog.close();
+
+        alert("사용자 취소");
       } else if (res.status === "expired") {
         clearInterval(timer);
+        dialog.close();
+
         alert("만료");
       } else if (res.error) {
         clearInterval(timer);
-        alert("에러");
+        dialog.close();
+
+        alert("에러 : " + res.error);
       }
     });
   }, 1000);
 }
 
+/**
+ * 지갑앱을 실행하기 위한 URL Scheme을  QRCODE 로 보여줌
+ */
+function showQRCode(requestId) {
+  var content = "wemix://wallet?requestId=" + requestId;
+  document.getElementById("qrcode_content").textContent = content;
+  QRCode.toCanvas(document.getElementById("qrcode"), content);
+
+  dialog.showModal();
+}
+
+// 지갑 연결
 document.getElementById("auth").onclick = function () {
   // 인증 요청
   auth(meta).then((res) => {
     // QRCODE
-    var content = "wemix://wallet?requestId=" + res.requestId;
-    document.getElementById("qrcodd_content").textContent = content;
-    QRCode.toCanvas(
-      document.getElementById("qrcode"),
-      content,
-      function (error) {
-        if (!error) {
-          // 처리 요청 대기
-          responseWait("auth", res.requestId);
-        }
-      }
-    );
+    showQRCode(res.requestId);
+
+    // 인증 대기
+    responseWait(res.requestId, function (response) {
+      document.getElementById("wallet_address").textContent = response.address;
+      alert("지갑 연결 완료");
+    });
   });
 };

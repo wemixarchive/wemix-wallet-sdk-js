@@ -15,12 +15,15 @@
     <p><button id="token_send">Token 전송 요청</button></p>
     <p><button id="nft_send">NFT 전송 요청</button></p>
     <p><button id="contract_execute">Contract 실행 요청</button></p>
-
-    <canvas id="qrcode"></canvas>
-    <p><div id="qrcodd_content"></div></p>
     <br/>
     <br/>
     <p>연결된 지갑 주소 : <span id="wallet_address"></span></p>
+
+    <dialog id="qrcode_popup">
+      <canvas id="qrcode" style="display: block; margin: 0 auto;"></canvas>
+      <p><div id="qrcode_content"></div></p>
+    </dialog>
+
     <script src="./index.js"></script>
   </body>
 </html>
