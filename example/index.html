@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>wemix-wallet-sdk-js sample</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:400,900"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  </head>
+  <body>
+    <p><button id="auth">지갑연결</button></p>
+    <p><button id="wemix_send">Wemix 전송 요청</button></p>
+    <p><button id="token_send">Token 전송 요청</button></p>
+    <p><button id="nft_send">NFT 전송 요청</button></p>
+    <p><button id="contract_execute">Contract 실행 요청</button></p>
+
+    <canvas id="qrcode"></canvas>
+    <p><div id="qrcodd_content"></div></p>
+    <br/>
+    <br/>
+    <p>연결된 지갑 주소 : <span id="wallet_address"></span></p>
+    <script src="./index.js"></script>
+  </body>
+</html>
