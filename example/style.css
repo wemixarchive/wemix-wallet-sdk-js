@@ -7,6 +7,10 @@ button {
   line-height: 0;
 }
 
+input {
+  border-color: gray;
+}
+
 .mainBtn {
   margin-right: 10px;
 }
@@ -16,4 +20,12 @@ button {
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+#request_content {
+  margin: 20px 0;
+}
+
+.address {
+  width: 380px;
 }

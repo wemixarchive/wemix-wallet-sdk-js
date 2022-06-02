@@ -18,8 +18,16 @@
     <button id="nft_send" class="mainBtn">NFT 전송 요청</button>
     <button id="contract_execute" class="mainBtn">Contract 실행 요청</button>
     <br />
+    <div id="request_content" style="display: none;">
+      From Address<input id="from_address" class="address" type="text" />
+      To Address<input id="to_address" class="address" type="text" />
+      <p id="value_wrap">Value<input id="request_value" type="number" /></p>
+      <p id="contract_wrap">Contract<input id="contract" type="text" /></p>
+      <p id="tokenId_wrap">Token Id<input id="tokenId" type="text" /></p>
+      <button id="qr_request">요청</button>
+    </div>
     <br />
-    <p>연결된 지갑 주소 : <span id="wallet_address"></span></p>
+    <p id="result_content"></p>
 
     <dialog id="qrcode_popup">
       <canvas id="qrcode" style="display: block; margin: 0 auto;"></canvas>
