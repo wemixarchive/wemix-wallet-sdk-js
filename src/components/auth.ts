@@ -17,7 +17,12 @@ export async function auth(
         type: "auth",
       }),
     });
+
     const res = await response.json();
+
+    if (res.errorMessage) {
+      throw new Error(res.errorMessage);
+    }
 
     return { requestId: res?.requestId };
   } catch (error) {

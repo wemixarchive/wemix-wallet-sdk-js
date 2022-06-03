@@ -92,27 +92,26 @@ function responseWait(requestId, completed) {
   // 요청에 대한 결과가 proposal에서 다른 상태로 변경될 때 까지 1초 간격으로 조회
   timer = setInterval(() => {
     wemixSDK.getResult(requestId).then((res) => {
-      // wemixSDK.getResult(tmp_reqid).then((res) => {
       if (res.error) {
         clearFunc();
         alert("Error: " + res.error);
         return;
-      }
-
-      switch (res.status) {
-        case "proposal":
-          break;
-        case "completed":
-          clearFunc();
-          completed(res);
-          break;
-        case "canceled":
-          clearFunc();
-          alert("사용자 취소");
-          break;
-        case "expired":
-          clearFunc();
-          alert("만료");
+      } else if (res.status) {
+        switch (res.status) {
+          case "proposal":
+            break;
+          case "completed":
+            clearFunc();
+            completed(res);
+            break;
+          case "canceled":
+            clearFunc();
+            alert("사용자 취소");
+            break;
+          case "expired":
+            clearFunc();
+            alert("만료");
+        }
       }
     });
   }, 1000);
@@ -134,19 +133,23 @@ function showQRCode(requestId) {
 function authHandler() {
   // 인증 요청
   wemixSDK.auth(meta).then((res) => {
-    // QRCODE
-    showQRCode(res.requestId);
+    if (res.error) {
+      alert(`Error: ${res.error}`);
+    } else if (res.requestId) {
+      // QRCODE
+      showQRCode(res.requestId);
 
-    // 인증 성공 시 callback 함수
-    const completeCallback = (response) => {
-      from = response.address;
-      fromAddress.value = response.address;
-      resultContent.innerText = "연결된 지갑 주소 : " + response.address;
-      alert("지갑 인증 완료");
-    };
+      // 인증 성공 시 callback 함수
+      const completeCallback = (response) => {
+        from = response.address;
+        fromAddress.value = response.address;
+        resultContent.innerText = "연결된 지갑 주소 : " + response.address;
+        alert("지갑 인증 완료");
+      };
 
-    // 처리 대기
-    responseWait(res.requestId, completeCallback);
+      // 처리 대기
+      responseWait(res.requestId, completeCallback);
+    }
   });
 }
 
@@ -159,21 +162,25 @@ function sendWemixHandler() {
 
   // 전송 요청
   wemixSDK.sendWemix(meta, transaction).then((res) => {
-    // QRCODE
-    showQRCode(res.requestId);
+    if (res.error) {
+      alert(`Error: ${res.error}`);
+    } else if (res.requestId) {
+      // QRCODE
+      showQRCode(res.requestId);
 
-    // 전송 성공 시 callback 함수
-    const completeCallback = (response) => {
-      resultContent.innerHTML =
-        "트랜잭션 해시 : " +
-        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
-          response.tx_hash
-        }</a>`;
-      alert("코인 전송 완료");
-    };
+      // 전송 성공 시 callback 함수
+      const completeCallback = (response) => {
+        resultContent.innerHTML =
+          "트랜잭션 해시 : " +
+          `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+            response.tx_hash
+          }</a>`;
+        alert("코인 전송 완료");
+      };
 
-    // 처리 대기
-    responseWait(res.requestId, completeCallback);
+      // 처리 대기
+      responseWait(res.requestId, completeCallback);
+    }
   });
 }
 
@@ -186,21 +193,25 @@ function sendTokenHandler() {
 
   // 전송 요청
   wemixSDK.sendToken(meta, transaction).then((res) => {
-    // QRCODE
-    showQRCode(res.requestId);
+    if (res.error) {
+      alert(`Error: ${res.error}`);
+    } else if (res.requestId) {
+      // QRCODE
+      showQRCode(res.requestId);
 
-    // 전송 성공 시 callback 함수
-    const completeCallback = (response) => {
-      resultContent.innerHTML =
-        "트랜잭션 해시 : " +
-        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
-          response.tx_hash
-        }</a>`;
-      alert("토큰 전송 완료");
-    };
+      // 전송 성공 시 callback 함수
+      const completeCallback = (response) => {
+        resultContent.innerHTML =
+          "트랜잭션 해시 : " +
+          `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+            response.tx_hash
+          }</a>`;
+        alert("토큰 전송 완료");
+      };
 
-    // 처리 대기
-    responseWait(res.requestId, completeCallback);
+      // 처리 대기
+      responseWait(res.requestId, completeCallback);
+    }
   });
 }
 
@@ -213,21 +224,25 @@ function sendNFTHandler() {
 
   // 전송 요청
   wemixSDK.sendNFT(meta, transaction).then((res) => {
-    // QRCODE
-    showQRCode(res.requestId);
+    if (res.error) {
+      alert(`Error: ${res.error}`);
+    } else if (res.requestId) {
+      // QRCODE
+      showQRCode(res.requestId);
 
-    // 전송 성공 시 callback 함수
-    const completeCallback = (response) => {
-      resultContent.innerHTML =
-        "트랜잭션 해시 : " +
-        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
-          response.tx_hash
-        }</a>`;
-      alert("NFT 전송 완료");
-    };
+      // 전송 성공 시 callback 함수
+      const completeCallback = (response) => {
+        resultContent.innerHTML =
+          "트랜잭션 해시 : " +
+          `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+            response.tx_hash
+          }</a>`;
+        alert("NFT 전송 완료");
+      };
 
-    // 처리 대기
-    responseWait(res.requestId, completeCallback);
+      // 처리 대기
+      responseWait(res.requestId, completeCallback);
+    }
   });
 }
 
@@ -240,21 +255,25 @@ function executeContractHandler() {
 
   // 전송 요청
   wemixSDK.executeContract(meta, transaction).then((res) => {
-    // QRCODE
-    showQRCode(res.requestId);
+    if (res.error) {
+      alert(`Error: ${res.error}`);
+    } else if (res.requestId) {
+      // QRCODE
+      showQRCode(res.requestId);
 
-    // 전송 성공 시 callback 함수
-    const completeCallback = (response) => {
-      resultContent.innerHTML =
-        "트랜잭션 해시 : " +
-        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
-          response.tx_hash
-        }</a>`;
-      alert("컨트랙트 실행 완료");
-    };
+      // 전송 성공 시 callback 함수
+      const completeCallback = (response) => {
+        resultContent.innerHTML =
+          "트랜잭션 해시 : " +
+          `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+            response.tx_hash
+          }</a>`;
+        alert("컨트랙트 실행 완료");
+      };
 
-    // 처리 대기
-    responseWait(res.requestId, completeCallback);
+      // 처리 대기
+      responseWait(res.requestId, completeCallback);
+    }
   });
 }
 

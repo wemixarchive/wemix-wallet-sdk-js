@@ -19,7 +19,12 @@ export async function sendToken(
         transaction: send_token,
       }),
     });
+
     const res = await response.json();
+
+    if (res.errorMessage) {
+      throw new Error(res.errorMessage);
+    }
 
     return { requestId: res?.requestId };
   } catch (error) {

@@ -13,6 +13,10 @@ export async function getResult(
     });
     const res = await response.json();
 
+    if (res.errorMessage) {
+      throw new Error(res.errorMessage);
+    }
+
     return {
       status: res?.status,
       address: res?.result?.address,

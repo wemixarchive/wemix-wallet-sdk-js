@@ -19,7 +19,12 @@ export async function sendNFT(
         transaction: send_nft,
       }),
     });
+
     const res = await response.json();
+
+    if (res.errorMessage) {
+      throw new Error(res.errorMessage);
+    }
 
     return { requestId: res?.requestId };
   } catch (error) {

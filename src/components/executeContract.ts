@@ -21,6 +21,10 @@ export async function executeContract(
     });
     const res = await response.json();
 
+    if (res.errorMessage) {
+      throw new Error(res.errorMessage);
+    }
+
     return { requestId: res?.requestId };
   } catch (error) {
     return { error: getErrorMsg(error) };
