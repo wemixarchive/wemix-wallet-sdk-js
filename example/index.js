@@ -1,5 +1,11 @@
-import wemixSDK, { SendWemix, SendToken } from "../src/index";
+import wemixSDK, {
+  SendWemix,
+  SendToken,
+  SendNFT,
+  ContractExecute,
+} from "../src/index";
 import QRCode from "../node_modules/qrcode/lib";
+import { abi_sample, explorer_url, params_sample } from "./constants";
 
 // HTML DOM 객체
 const authBtn = document.getElementById("auth");
@@ -10,8 +16,8 @@ const contractBtn = document.getElementById("contract_execute");
 
 const qrContent = document.getElementById("qrcode_content");
 const qrCanvas = document.getElementById("qrcode");
-const qrDialog = document.getElementById("qrcode_popup");
-const dialogBtn = document.getElementById("qrCloseBtn");
+const qrDialog = document.getElementById("qrcode_dialog");
+const dialogCloseBtn = document.getElementById("qrCloseBtn");
 
 const fromAddress = document.getElementById("from_address");
 const toAddress = document.getElementById("to_address");
@@ -27,10 +33,19 @@ const tokenIdWrap = document.getElementById("tokenId_wrap");
 const requestContent = document.getElementById("request_content");
 const resultContent = document.getElementById("result_content");
 
-// request input value
-let from, to, requestValue, contract, tokenId, abi, params;
+// 변수
+let from, to, requestValue, contract, tokenId, timer;
+let abi = abi_sample;
+let params = params_sample;
+let event_func = null;
 
-// input onchange
+// 요청하는 앱의 서비스 정보
+const meta = {
+  name: "Wemix JS SDK Sample",
+  description: "JS SDK 테스트 요청",
+};
+
+// input onChange 설정
 fromAddress.addEventListener("change", (e) => {
   from = e.target.value;
 });
@@ -38,7 +53,7 @@ toAddress.addEventListener("change", (e) => {
   to = e.target.value;
 });
 reqValue.addEventListener("change", (e) => {
-  requestValue = Number(e.target.value);
+  requestValue = e.target.value;
 });
 reqContract.addEventListener("change", (e) => {
   contract = e.target.value;
@@ -47,8 +62,9 @@ reqTokenId.addEventListener("change", (e) => {
   tokenId = e.target.value;
 });
 
-// request content init
-resetReqContent();
+/**
+ * 변수, input, 결과 데이터 초기화
+ */
 function resetReqContent() {
   to = "";
   requestValue = 0;
@@ -62,24 +78,21 @@ function resetReqContent() {
 
   resultContent.innerText = "";
 }
-
-// 요청하는 앱의 서비스 정보
-const meta = {
-  name: "Wemix JS SDK Sample",
-  description: "JS SDK 테스트 요청",
-};
+resetReqContent();
 
 /**
- * WeMix Wallet 에서 인증 완료시 까지 대기
+ * 요청된 requestId에 대한 결과 확인
  */
 function responseWait(requestId, completed) {
   const clearFunc = () => {
     clearInterval(timer);
-    qrDialog.close();
+    qrDialog.style.display = "none";
   };
 
-  const timer = setInterval(() => {
+  // 요청에 대한 결과가 proposal에서 다른 상태로 변경될 때 까지 1초 간격으로 조회
+  timer = setInterval(() => {
     wemixSDK.getResult(requestId).then((res) => {
+      // wemixSDK.getResult(tmp_reqid).then((res) => {
       if (res.error) {
         clearFunc();
         alert("Error: " + res.error);
@@ -106,16 +119,18 @@ function responseWait(requestId, completed) {
 }
 
 /**
- * 지갑앱을 실행하기 위한 URL Scheme을  QRCODE 로 보여줌
+ * 지갑앱을 실행하기 위한 URL Scheme을 QRCODE로 보여줌
  */
 function showQRCode(requestId) {
   const content = "wemix://wallet?requestId=" + requestId;
   qrContent.innerText = content;
   QRCode.toCanvas(qrCanvas, content);
-  qrDialog.showModal();
+  qrDialog.style.display = "flex";
 }
 
-// 지갑 연결
+/**
+ * 지갑 인증 요청
+ */
 function authHandler() {
   // 인증 요청
   wemixSDK.auth(meta).then((res) => {
@@ -127,7 +142,7 @@ function authHandler() {
       from = response.address;
       fromAddress.value = response.address;
       resultContent.innerText = "연결된 지갑 주소 : " + response.address;
-      alert("지갑 연결 완료");
+      alert("지갑 인증 완료");
     };
 
     // 처리 대기
@@ -135,9 +150,11 @@ function authHandler() {
   });
 }
 
-// 코인 전송
+/**
+ * 코인 전송
+ */
 function sendWemixHandler() {
-  // transcation data
+  // transaction data
   const transaction = new SendWemix(from, to, requestValue);
 
   // 전송 요청
@@ -147,7 +164,11 @@ function sendWemixHandler() {
 
     // 전송 성공 시 callback 함수
     const completeCallback = (response) => {
-      resultContent.innerText = "트랜잭션 해시 : " + response.tx_hash;
+      resultContent.innerHTML =
+        "트랜잭션 해시 : " +
+        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+          response.tx_hash
+        }</a>`;
       alert("코인 전송 완료");
     };
 
@@ -156,9 +177,11 @@ function sendWemixHandler() {
   });
 }
 
-// 토큰 전송
+/**
+ * 토큰 전송
+ */
 function sendTokenHandler() {
-  // transcation data
+  // transaction data
   const transaction = new SendToken(from, to, requestValue, contract);
 
   // 전송 요청
@@ -168,7 +191,11 @@ function sendTokenHandler() {
 
     // 전송 성공 시 callback 함수
     const completeCallback = (response) => {
-      resultContent.innerText = "트랜잭션 해시 : " + response.tx_hash;
+      resultContent.innerHTML =
+        "트랜잭션 해시 : " +
+        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+          response.tx_hash
+        }</a>`;
       alert("토큰 전송 완료");
     };
 
@@ -177,7 +204,63 @@ function sendTokenHandler() {
   });
 }
 
-// html dom display 세팅
+/**
+ * NFT 전송
+ */
+function sendNFTHandler() {
+  // transaction data
+  const transaction = new SendNFT(from, to, contract, tokenId);
+
+  // 전송 요청
+  wemixSDK.sendNFT(meta, transaction).then((res) => {
+    // QRCODE
+    showQRCode(res.requestId);
+
+    // 전송 성공 시 callback 함수
+    const completeCallback = (response) => {
+      resultContent.innerHTML =
+        "트랜잭션 해시 : " +
+        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+          response.tx_hash
+        }</a>`;
+      alert("NFT 전송 완료");
+    };
+
+    // 처리 대기
+    responseWait(res.requestId, completeCallback);
+  });
+}
+
+/**
+ * 컨트랙트 실행
+ */
+function executeContractHandler() {
+  // transaction data
+  const transaction = new ContractExecute(from, to, abi, params);
+
+  // 전송 요청
+  wemixSDK.executeContract(meta, transaction).then((res) => {
+    // QRCODE
+    showQRCode(res.requestId);
+
+    // 전송 성공 시 callback 함수
+    const completeCallback = (response) => {
+      resultContent.innerHTML =
+        "트랜잭션 해시 : " +
+        `<a href="${explorer_url + response.tx_hash}" target="_blank">${
+          response.tx_hash
+        }</a>`;
+      alert("컨트랙트 실행 완료");
+    };
+
+    // 처리 대기
+    responseWait(res.requestId, completeCallback);
+  });
+}
+
+/**
+ * html dom display 세팅
+ */
 function domDisplaySet(type) {
   requestContent.style.display = "block";
   switch (type) {
@@ -206,27 +289,49 @@ function domDisplaySet(type) {
   }
 }
 
+/**
+ * 현재 컨텐츠에 따른 Display 및 event 세팅
+ */
 function showRequestContent(type) {
-  resetReqContent(); // 입력값 초기화
+  // 요청 버튼의 기존 event 제거
+  if (event_func && typeof event_func == "function") {
+    qrReqBtn.removeEventListener("click", event_func);
+  }
+  resetReqContent(); // 변수, input 초기화
   domDisplaySet(type); // html dom display 세팅
 
   switch (type) {
     case "auth":
       authHandler();
+      event_func = null;
       break;
     case "sendWemix":
       qrReqBtn.addEventListener("click", sendWemixHandler);
+      event_func = sendWemixHandler;
       break;
     case "sendToken":
       qrReqBtn.addEventListener("click", sendTokenHandler);
+      event_func = sendTokenHandler;
       break;
+    case "sendNFT":
+      qrReqBtn.addEventListener("click", sendNFTHandler);
+      event_func = sendNFTHandler;
+      break;
+    case "contract":
+      qrReqBtn.addEventListener("click", executeContractHandler);
+      event_func = executeContractHandler;
   }
 }
 
+// 컨텐츠 버튼 클릭 이벤트 등록
 authBtn.addEventListener("click", () => showRequestContent("auth"));
 wemixBtn.addEventListener("click", () => showRequestContent("sendWemix"));
 tokenBtn.addEventListener("click", () => showRequestContent("sendToken"));
 nftBtn.addEventListener("click", () => showRequestContent("sendNFT"));
 contractBtn.addEventListener("click", () => showRequestContent("contract"));
 
-dialogBtn.addEventListener("click", () => qrDialog.close());
+// dialog 닫기 버튼 이벤트 등록
+dialogCloseBtn.addEventListener("click", () => {
+  clearInterval(timer);
+  qrDialog.style.display = "none";
+});

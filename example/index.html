@@ -29,13 +29,15 @@
     <br />
     <p id="result_content"></p>
 
-    <dialog id="qrcode_popup">
-      <canvas id="qrcode" style="display: block; margin: 0 auto;"></canvas>
-      <div id="qrcode_content"></div>
-      <div class="closeDiv">
-        <button id="qrCloseBtn">닫기</button>
+    <div id="qrcode_dialog" style="display: none;">
+      <div id="qr_content">
+        <canvas id="qrcode" style="display: block; margin: 0 auto;"></canvas>
+        <div id="qrcode_content"></div>
+        <div class="closeDiv">
+          <button id="qrCloseBtn">닫기</button>
+        </div>
       </div>
-    </dialog>
+    </div>
   </div>
 
   <script src="./index.js"></script>
