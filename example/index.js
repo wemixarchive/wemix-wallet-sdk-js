@@ -1,11 +1,9 @@
-import wemixSDK, {
-  SendWemix,
-  SendToken,
-  SendNFT,
-  ContractExecute,
-} from "../src/index";
 import QRCode from "../node_modules/qrcode/lib";
 import { abi_sample, explorer_url, params_sample } from "./constants";
+const wemixSDK = require("../dist/wemixSDK");
+
+const { SendWemix, SendToken, SendNFT, ContractExecute } =
+  wemixSDK.txConstructor;
 
 // HTML DOM 객체
 const authBtn = document.getElementById("auth");
