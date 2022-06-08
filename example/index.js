@@ -37,7 +37,9 @@ const requestContent = document.getElementById("request_content");
 const resultContent = document.getElementById("result_content");
 
 // 변수
-let from, to, requestValue, contract, tokenId, timer, abi, params;
+let from, to, requestValue, contract, tokenId, timer;
+let abi = abi_sample;
+let params = params_sample;
 let event_func = null;
 
 // 요청하는 앱의 서비스 정보
@@ -77,8 +79,8 @@ function resetReqContent() {
   requestValue = 0;
   contract = "";
   tokenId = "";
-  abi = "";
-  params = "";
+  // abi = "";
+  // params = "";
 
   toAddress.value = to;
   reqValue.value = requestValue;
