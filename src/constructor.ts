@@ -44,9 +44,9 @@ export class ContractExecute {
   abi: string;
   params: string;
 
-  constructor(from: string, to: string, abi: string, params: string) {
+  constructor(from: string, contract: string, abi: string, params: string) {
     this.from = from;
-    this.to = to;
+    this.to = contract;
     this.abi = abi;
     this.params = params;
   }

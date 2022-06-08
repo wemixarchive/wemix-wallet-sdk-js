@@ -22,19 +22,22 @@ const toAddress = document.getElementById("to_address");
 const reqValue = document.getElementById("request_value");
 const reqContract = document.getElementById("contract");
 const reqTokenId = document.getElementById("tokenId");
+const reqAbi = document.getElementById("abi");
+const reqParams = document.getElementById("params");
 const qrReqBtn = document.getElementById("qr_request");
 
+const toWrap = document.getElementById("to_wrap");
 const valueWrap = document.getElementById("value_wrap");
 const contractWrap = document.getElementById("contract_wrap");
 const tokenIdWrap = document.getElementById("tokenId_wrap");
+const abiWrap = document.getElementById("abi_wrap");
+const paramsWrap = document.getElementById("params_wrap");
 
 const requestContent = document.getElementById("request_content");
 const resultContent = document.getElementById("result_content");
 
 // 변수
-let from, to, requestValue, contract, tokenId, timer;
-let abi = abi_sample;
-let params = params_sample;
+let from, to, requestValue, contract, tokenId, timer, abi, params;
 let event_func = null;
 
 // 요청하는 앱의 서비스 정보
@@ -59,6 +62,12 @@ reqContract.addEventListener("change", (e) => {
 reqTokenId.addEventListener("change", (e) => {
   tokenId = e.target.value;
 });
+reqAbi.addEventListener("change", (e) => {
+  abi = e.target.value;
+});
+reqParams.addEventListener("change", (e) => {
+  params = e.target.value;
+});
 
 /**
  * 변수, input, 결과 데이터 초기화
@@ -68,11 +77,15 @@ function resetReqContent() {
   requestValue = 0;
   contract = "";
   tokenId = "";
+  abi = "";
+  params = "";
 
   toAddress.value = to;
   reqValue.value = requestValue;
   reqContract.value = contract;
   reqTokenId.value = tokenId;
+  reqAbi.value = abi;
+  reqParams.value = params;
 
   resultContent.innerText = "";
 }
@@ -249,7 +262,7 @@ function sendNFTHandler() {
  */
 function executeContractHandler() {
   // transaction data
-  const transaction = new ContractExecute(from, to, abi, params);
+  const transaction = new ContractExecute(from, contract, abi, params);
 
   // 전송 요청
   wemixSDK.executeContract(meta, transaction).then((res) => {
@@ -279,30 +292,31 @@ function executeContractHandler() {
  * html dom display 세팅
  */
 function domDisplaySet(type) {
+  const displaySet = (set1, set2, set3, set4, set5, set6) => {
+    toWrap.style.display = set1;
+    valueWrap.style.display = set2;
+    contractWrap.style.display = set3;
+    tokenIdWrap.style.display = set4;
+    abiWrap.style.display = set5;
+    paramsWrap.style.display = set6;
+  };
+
   requestContent.style.display = "block";
   switch (type) {
     case "auth":
       requestContent.style.display = "none";
       break;
     case "sendWemix":
-      valueWrap.style.display = "block";
-      contractWrap.style.display = "none";
-      tokenIdWrap.style.display = "none";
+      displaySet("block", "block", "none", "none", "none", "none");
       break;
     case "sendToken":
-      valueWrap.style.display = "block";
-      contractWrap.style.display = "block";
-      tokenIdWrap.style.display = "none";
+      displaySet("block", "block", "block", "none", "none", "none");
       break;
     case "sendNFT":
-      valueWrap.style.display = "none";
-      contractWrap.style.display = "block";
-      tokenIdWrap.style.display = "block";
+      displaySet("block", "none", "block", "block", "none", "none");
       break;
-    default:
-      valueWrap.style.display = "none";
-      contractWrap.style.display = "none";
-      tokenIdWrap.style.display = "none";
+    default: // executeContract
+      displaySet("none", "none", "block", "none", "block", "block");
   }
 }
 
