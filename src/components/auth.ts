@@ -1,4 +1,4 @@
-import { baseURL } from "../constant";
+import { baseURL } from "../constants";
 import { ERROR_RES, METADATA, PROPOSAL_RES } from "../type";
 import { getErrorMsg } from "./getErrorMsg";
 

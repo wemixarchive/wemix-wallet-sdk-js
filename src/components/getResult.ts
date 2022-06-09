@@ -1,5 +1,5 @@
 import { ERROR_RES, RESULT_RES } from "../type";
-import { baseURL } from "../constant";
+import { baseURL } from "../constants";
 import { getErrorMsg } from "./getErrorMsg";
 
 export async function getResult(

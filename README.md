@@ -1,49 +1,51 @@
-# Klip A2A JavaScript SDK
+# Wemix A2A JavaScript SDK
 
 Wemix A2A JavaScript SDK는 Wemix Wallet에 App2App 요청을 간편하게 처리하도록 도와주는 라이브러리입니다.
 더 자세한 설명 및 사용 방법은 [개발자 문서](https://xxxx.com/)를 참고해주세요.
 
 ## 설치 방법
 
-### npm이용 하는 경우 (node 10 이상 권장)
+### 직접 파일을 다운 받아 사용하는 경우
 
-`npm install wemix-sdk` 혹은 `yarn add wemix-sdk` 커맨드를 통해 설치 후 다음과 같이 ES module import 방식으로 사용할 수 있습니다.
-
-```javascript
-import WemixSDK, {
-  SendWemix,
-  SendToken,
-  SendNFT,
-  ContractExecute,
-} from "wemix-sdk";
-```
-
-### 직접 파일을 다운 받아 사용하는 경우 (IIFE Module import)
-
-[다운로드 페이지](https://docs.klipwallet.com/a2a-sdk/a2a-sdk-download)에서 파일을 다운받은 후, 다운 받은 파일을 repository에 복사합니다. HTML 파일에 다음과 같이 스크립트 태그를 삽입합니다.
+[다운로드 페이지](https://www.naver.com)에서 파일을 다운받은 후, 다운 받은 파일을 repository에 복사합니다. HTML 파일에 다음과 같이 스크립트 태그를 삽입합니다.
 
 ```html
-<script src="./lib/klipSDK-2.0.0.min.js"></script>
+<script src="./lib/wemixSDK.js"></script>
 ```
 
-이후 글로벌 네임스페이스에 선언된 klipSDK 변수를 활용하여 각 메소드에 접근합니다.
+ES 모듈 사용 시 아래와 같이 삽입합니다.
 
 ```javascript
-klipSDK.prepare(...)
-klipSDK.request(...)
-klipSDK.getResult(...)
-klipSDK.getCardList(...)
+import wemixSDK from "./lib/wemixSDK.js";
+```
+
+이후 (글로벌 네임스페이스에) 선언된 wemixSDK 변수를 활용하여 각 메소드에 접근합니다.
+
+```javascript
+wemixSDK.auth(...)
+wemixSDK.sendWemix(...)
+wemixSDK.sendToekn(...)
+wemixSDK.sendNFT(...)
+wemixSDK.executeContract(...)
+wemixSDK.getResult(...)
+{ SendWemix, SendToken, SendNFT, ContractExecute } = wemixSDK.txConstructor
 ```
 
 ## Example 실행
 
-parcel 추가
+**build 파일 생성**
+
+```
+npm run build
+```
+
+**parcel 추가**
 
 ```
 npm install -g parcel-bundler
 ```
 
-예제 실행
+**예제 실행**
 
 ```
 npm run example
@@ -53,224 +55,207 @@ npm run example
 
 ### 개요
 
-App2App 요청은 크게 `prepare`, `request`, `getResult`의 순서로 진행이 됩니다.
+App2App 요청은 크게 `Proposal`, `Result`의 순서로 진행이 됩니다.
 
-- `prepare`는 어떠한 요청을 할지 요청을 정의하는 단계로 총 5가지 종류의 요청이 존재
-- `request`는 함수 호출을 통해 Klip으로 화면이 전환되어 실제 서명 프로세스를 진행
-- `getResult`는 함수 호출을 통해 결과값을 받고 확인
+- `Proposal`은 DApp에서 실행할 작업을 요청하는 단계로 총 5가지 종류의 요청이 존재
+- `Result`는 함수 호출을 통해 결과값을 받고 확인
 
-추가적으로 `getCardList`는 BApp 개발의 편의를 위해 Klip 사용자의 NFT 목록을 받아올 수 있도록 제공되는 함수입니다.
+### Proposal
 
-### prepare
+실행할 App2App 요청을 보내고 request Id를 받습니다.
 
-App2App 요청을 준비하고 request key를 받습니다.
+#### Request Parameter
 
-#### prepare.auth
+요청 시 필요한 매개변수
 
-사용자의 정보를 획득하는 요청입니다.
+**metadata**
 
-**Parameters**
+| Key         | Type   | Value                | Required |
+| ----------- | ------ | -------------------- | -------- |
+| name        | string | dApp 이름            | true     |
+| description | string | 요청 설명            | true     |
+| url         | string | dApp 대표 URL        | false    |
+| icon        | string | dApp 로고 이미지 URL | false    |
 
-| Name        | Type   | Description                                                  |
-| ----------- | ------ | ------------------------------------------------------------ |
-| bappName    | string | 유저에게 표시될 BApp의 이름                                  |
-| successLink | string | 유저 동의과정 완료 후 돌아올 링크 (optional)                 |
-| failLink    | string | 유저 동의과정에서 문제가 발생 할 경우 돌아올 링크 (optional) |
+Example
+
+```javascript
+const meta = {
+  name: "Wemix dApp Name",
+  description: "JS SDK Test Request",
+  url: "대표 URL",
+  icon: "로고 이미지 URL",
+};
+```
+
+**transaction**
+
+| Key      | Type   | Value                                                      | Required |
+| -------- | ------ | ---------------------------------------------------------- | -------- |
+| from     | string | 전송자의 주소. 지갑 사용자가 맞는지 확인용                 | false    |
+| to       | string | 전송 시 수신 주소                                          | false    |
+| value    | string | 전송하려는 코인 또는 토큰 수량, 10^18 기준                 | false    |
+| contract | string | 토큰 전송, NFT 전송, 컨트랙트 실행 시 해당 컨트랙트의 주소 | false    |
+| tokenId  | string | 전송하려는 NFT token id                                    | false    |
+| abi      | string | 스마트 컨트랙트 실행 시 함수의 abi                         | false    |
+| params   | string | 스마트 컨트랙트 실행 시 함수 파라미터                      | false    |
+
+Example
+
+```javascript
+new SendWemix(from, to, value);
+new SendToken(from, to, value, contract);
+new SendNFT(from, to, contract, tokenId);
+new ContractExecute(from, contract, abi, params);
+```
+
+#### Response Parameter
+
+요청시 응답 매개변수
+
+| Key       | Type   | Value               | Required |
+| --------- | ------ | ------------------- | -------- |
+| requestId | string | App2App 요청 식별자 | true     |
+
+#### wemixSDK.auth
+
+지갑을 인증하는 요청입니다.
 
 **Example**
 
 ```javascript
-const bappName = "my app";
-const successLink = "myApp://...";
-const failLink = "myApp://...";
-const res = await prepare.auth({ bappName, successLink, failLink });
-if (res.err) {
-  // 에러 처리
-} else if (res.request_key) {
-  // request_key 보관
-}
+const meta = {...}  // metadata
+
+wemixSDK.auth(meta).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
 ```
 
-#### prepare.sendKLAY
+#### wemixSDK.sendWemix
 
-유저의 클레이를 특정 주소로 전송하는 요청입니다.
-
-**Parameters**
-
-| Name        | Type   | Description                                                         |
-| ----------- | ------ | ------------------------------------------------------------------- |
-| bappName    | string | 유저에게 표시될 BApp의 이름                                         |
-| to          | string | 받는 사람의 주소                                                    |
-| amount      | string | 보낼 클레이 수량 (단위: KLAY, 소수점 최대 6자리 허용)               |
-| from        | string | 유저의 클립 계정 주소가 from 주소와 일치하는 경우만 진행 (optional) |
-| successLink | string | 유저 동의과정 완료 후 돌아올 링크 (optional)                        |
-| failLink    | string | 유저 동의과정에서 문제가 발생 할 경우 돌아올 링크 (optional)        |
+유저가 보유한 코인을 특정 주소로 전송하는 요청입니다.
 
 **Example**
 
 ```javascript
-const bappName = "my app";
-const from = "0xB21F0285d27beb2373EC...";
-const to = "0xD8b1dC332...";
-const amount = "13.2";
-const successLink = "myApp://...";
-const failLink = "myApp://...";
-const res = await prepare.sendKLAY({
-  bappName,
-  from,
-  to,
-  amount,
-  successLink,
-  failLink,
-});
-if (res.err) {
-  // 에러 처리
-} else if (res.request_key) {
-  // request_key 보관
-}
+const meta = {...}
+const transaction = new SendWemix(...)
+
+wemixSDK.sendWemix(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
 ```
 
-#### prepare.sendToken
+#### wemixSDK.sendToken
 
 유저가 보유한 토큰을 특정 주소로 전송하는 요청입니다.
 
-**Parameters**
+**Example**
 
-| Name        | Type   | Description                                                         |
-| ----------- | ------ | ------------------------------------------------------------------- |
-| bappName    | string | 유저에게 표시될 BApp의 이름                                         |
-| to          | string | 받는 사람의 주소                                                    |
-| amount      | string | 보낼 토큰 수량 (단위: 토큰의 default 단위, 소수점 최대 6자리 허용)  |
-| contract    | string | 토큰 컨트랙트 주소                                                  |
-| from        | string | 유저의 클립 계정 주소가 from 주소와 일치하는 경우만 진행 (optional) |
-| successLink | string | 유저 동의과정 완료 후 돌아올 링크 (optional)                        |
-| failLink    | string | 유저 동의과정에서 문제가 발생 할 경우 돌아올 링크 (optional)        |
+```javascript
+const meta = {...}
+const transaction = new SendToken(...)
+
+wemixSDK.sendToken(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
+```
+
+#### wemixSDK.sendNFT
+
+유저가 보유한 NFT를 특정 주소로 전송하는 요청입니다.
 
 **Example**
 
 ```javascript
-const bappName = "my app";
-const from = "0xB21F0285d27beb2373EC...";
-const to = "0xD8b1dC332...";
-const amount = "10.123";
-const contract = "0x813FB7677BbBAA...";
-const successLink = "myApp://...";
-const failLink = "myApp://...";
-const res = await prepare.sendToken({
-  bappName,
-  from,
-  to,
-  amount,
-  contract,
-  successLink,
-  failLink,
-});
-if (res.err) {
-  // 에러 처리
-} else if (res.request_key) {
-  // request_key 보관
-}
+const meta = {...}
+const transaction = new SendNFT(...)
+
+wemixSDK.sendNFT(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
 ```
 
-#### prepare.sendCard
-
-유저가 보유한 카드(NFT)를 특정 주소로 전송하는 요청입니다.
-
-**Parameters**
-
-| Name        | Type   | Description                                                         |
-| ----------- | ------ | ------------------------------------------------------------------- |
-| bappName    | string | 유저에게 표시될 BApp의 이름                                         |
-| to          | string | 받는 사람의 주소                                                    |
-| id          | string | NFT id                                                              |
-| contract    | string | NFT 컨트랙트 주소                                                   |
-| from        | string | 유저의 클립 계정 주소가 from 주소와 일치하는 경우만 진행 (optional) |
-| successLink | string | 유저 동의과정 완료 후 돌아올 링크 (optional)                        |
-| failLink    | string | 유저 동의과정에서 문제가 발생 할 경우 돌아올 링크 (optional)        |
-
-**Example**
-
-```javascript
-const res = await prepare.sendCard({
-  bappName,
-  from,
-  to,
-  id,
-  contract,
-  successLink,
-  failLink,
-});
-if (res.err) {
-  setErrorMsg(res.err);
-} else {
-  setRequestKey(res.request_key);
-}
-```
-
-#### prepare.executeContract
+#### wemixSDK.executeContract
 
 유저가 특정 컨트랙트의 함수를 실행하도록 하는 요청입니다.
 
-**Parameters**
-
-| Name        | Type   | Description                                                         |
-| ----------- | ------ | ------------------------------------------------------------------- |
-| bappName    | string | 유저에게 표시될 BApp의 이름                                         |
-| to          | string | 컨트랙트의 주소                                                     |
-| value       | string | 컨트랙트 실행하면서 같이 보낼 KLAY 수량 (단위: peb)                 |
-| abi         | string | 실행할 함수의 abi                                                   |
-| params      | string | 실행할 함수의 인자 목록                                             |
-| from        | string | 유저의 클립 계정 주소가 from 주소와 일치하는 경우만 진행 (optional) |
-| successLink | string | 유저 동의과정 완료 후 돌아올 링크 (optional)                        |
-| failLink    | string | 유저 동의과정에서 문제가 발생 할 경우 돌아올 링크 (optional)        |
-
 **Example**
 
 ```javascript
-const bappName = "my app";
-const from = "0xB21F0285d27beb2373EC...";
-const to = "0xD8b1dC332...";
-const value = "800000000";
-const abi =
-  '{"constant":false,"inputs":[{"name":"tokenId","type":"uint256"}],"name":"buyCard","outputs":[],"payable":true,"stateMutability":"payable","type":"function"}';
-const params = '["2829"]';
-const successLink = "myApp://...";
-const failLink = "myApp://...";
-const res = await prepare.executeContract({
-  bappName,
-  from,
-  to,
-  value,
-  abi,
-  params,
-  successLink,
-  failLink,
-});
-if (res.err) {
-  // 에러 처리
-} else if (res.request_key) {
-  // request_key 보관
-}
+const meta = {...}
+const transaction = new ContractExecute(...)
+
+wemixSDK.executeContract(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
 ```
 
-### request
+### Result
 
-Deep Link를 통해 Klip에 인증 또는 서명을 요청합니다. 만약, 실행 중인 스마트폰 기기에 KakaoTalk이 설치되어 있지 않으면,
-자동으로 AppStore의 KakaoTalk 다운로드 화면으로 이동됩니다. prepare 요청을 통해 받은 request key를 인자로 받습니다.
+App2App 요청에 대한 결과를 확인합니다.
 
-**Parameters**
+#### Request Parameter
 
-| Name                     | Type     | Description                                          |
-| ------------------------ | -------- | ---------------------------------------------------- |
-| requestKey               | String   | 요청 번호                                            |
-| onUnsupportedEnvironment | Function | 모바일 환경이 아닌 경우 실행 할 콜백 함수 (optional) |
+요청 결과 확인 시 필요한 매개변수
+
+| Key       | Type   | Value               | Required |
+| --------- | ------ | ------------------- | -------- |
+| requestId | string | App2App 요청 식별자 | true     |
+
+#### Response Parameter
+
+요청 결과 확인 시 응답 매개변수
+
+| Key     | Type   | Value                                                                                                                                 | Required |
+| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| status  | string | 상태유형<ul><li>proposal (실행 요청)</li><li>completed (실행 완료)</li><li>canceled (실행 취소)</li><li>expired (시간 만료)</li></ul> | true     |
+| address | string | 인증된 지갑 주소                                                                                                                      | false    |
+
+Example
+
+```javascript
+const meta = {
+  name: "Wemix dApp Name",
+  description: "JS SDK Test Request",
+  url: "대표 URL",
+  icon: "로고 이미지 URL",
+};
+```
 
 **Example**
 
 ```javascript
-request("b37f873d-32ce-4d5d-b72e-08d528e7fb8e", () =>
-  alert("모바일 환경에서 실행해주세요")
-);
+const meta = {...}
+const transaction = new SendNFT(...)
+
+wemixSDK.sendNFT(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
 ```
 
 ### getResult
@@ -336,6 +321,303 @@ project
 - `/example_react`: 리액트 예제 코드
 - `/example_vanilla`: 바닐라 자바스크립트 예제 코드
 - `rollup.config.js` : 롤업 설정 파일
+
+## License
+
+[MIT](LICENSE)
+
+# Wemix A2A JavaScript SDK
+
+Wemix A2A JavaScript SDK는 Wemix Wallet에 App2App 요청을 간편하게 처리하도록 도와주는 라이브러리입니다.
+더 자세한 설명 및 사용 방법은 [개발자 문서](https://xxxx.com/)를 참고해주세요.
+
+## 설치 방법
+
+### 직접 파일을 다운 받아 사용하는 경우
+
+[다운로드 페이지](https://www.naver.com)에서 파일을 다운받은 후, 다운 받은 파일을 repository에 복사합니다. HTML 파일에 다음과 같이 스크립트 태그를 삽입합니다.
+
+```html
+<script src="./lib/wemixSDK.js"></script>
+```
+
+ES 모듈 사용 시 아래와 같이 삽입합니다.
+
+```javascript
+import wemixSDK from "./lib/wemixSDK.js";
+```
+
+이후 (글로벌 네임스페이스에) 선언된 wemixSDK 변수를 활용하여 각 메소드에 접근합니다.
+
+```javascript
+wemixSDK.auth(...)
+wemixSDK.sendWemix(...)
+wemixSDK.sendToekn(...)
+wemixSDK.sendNFT(...)
+wemixSDK.executeContract(...)
+wemixSDK.getResult(...)
+{ SendWemix, SendToken, SendNFT, ContractExecute } = wemixSDK.txConstructor
+```
+
+## Example 실행
+
+**build 파일 생성**
+
+```
+npm run build
+```
+
+**parcel 추가**
+
+```
+npm install -g parcel-bundler
+```
+
+**예제 실행**
+
+```
+npm run example
+```
+
+## API
+
+### 개요
+
+App2App 요청은 크게 `Proposal`, `Result`의 순서로 진행이 됩니다.
+
+- `Proposal`은 DApp에서 실행할 작업을 요청하는 단계로 총 5가지 종류의 요청이 존재
+- `Result`는 함수 호출을 통해 결과값을 받고 확인
+
+### Proposal
+
+실행할 App2App 요청을 보내고 request Id를 받습니다.
+
+#### Request Parameter
+
+요청 시 필요한 매개변수
+
+**metadata**
+
+| Key         | Type   | Value                | Required |
+| ----------- | ------ | -------------------- | -------- |
+| name        | string | dApp 이름            | true     |
+| description | string | 요청 설명            | true     |
+| url         | string | dApp 대표 URL        | false    |
+| icon        | string | dApp 로고 이미지 URL | false    |
+
+Example
+
+```javascript
+const meta = {
+  name: "Wemix dApp Name",
+  description: "JS SDK Test Request",
+  url: "대표 URL",
+  icon: "로고 이미지 URL",
+};
+```
+
+**transaction**
+
+| Key      | Type   | Value                                                      | Required |
+| -------- | ------ | ---------------------------------------------------------- | -------- |
+| from     | string | 전송자의 주소. 지갑 사용자가 맞는지 확인용                 | false    |
+| to       | string | 전송 시 수신 주소                                          | false    |
+| value    | string | 전송하려는 코인 또는 토큰 수량, 10^18 기준                 | false    |
+| contract | string | 토큰 전송, NFT 전송, 컨트랙트 실행 시 해당 컨트랙트의 주소 | false    |
+| tokenId  | string | 전송하려는 NFT token id                                    | false    |
+| abi      | string | 스마트 컨트랙트 실행 시 함수의 abi                         | false    |
+| params   | string | 스마트 컨트랙트 실행 시 함수 파라미터                      | false    |
+
+Example
+
+```javascript
+new SendWemix(from, to, value);
+new SendToken(from, to, value, contract);
+new SendNFT(from, to, contract, tokenId);
+new ContractExecute(from, contract, abi, params);
+```
+
+#### Response Parameter
+
+요청시 응답 매개변수
+
+| Key       | Type   | Value               | Required |
+| --------- | ------ | ------------------- | -------- |
+| requestId | string | App2App 요청 식별자 | true     |
+
+#### wemixSDK.auth
+
+지갑을 인증하는 요청입니다.
+
+**Example**
+
+```javascript
+const meta = {...}  // metadata
+
+wemixSDK.auth(meta).then((res) => {
+    if (res.error) {
+      // 에러 처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
+```
+
+#### wemixSDK.sendWemix
+
+유저가 보유한 코인을 특정 주소로 전송하는 요청입니다.
+
+**Example**
+
+```javascript
+const meta = {...}
+const transaction = new SendWemix(...)
+
+wemixSDK.sendWemix(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러 처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
+```
+
+#### wemixSDK.sendToken
+
+유저가 보유한 토큰을 특정 주소로 전송하는 요청입니다.
+
+**Example**
+
+```javascript
+const meta = {...}
+const transaction = new SendToken(...)
+
+wemixSDK.sendToken(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러 처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
+```
+
+#### wemixSDK.sendNFT
+
+유저가 보유한 NFT를 특정 주소로 전송하는 요청입니다.
+
+**Example**
+
+```javascript
+const meta = {...}
+const transaction = new SendNFT(...)
+
+wemixSDK.sendNFT(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러 처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
+```
+
+#### wemixSDK.executeContract
+
+유저가 특정 컨트랙트의 함수를 실행하도록 하는 요청입니다.
+
+**Example**
+
+```javascript
+const meta = {...}
+const transaction = new ContractExecute(...)
+
+wemixSDK.executeContract(meta, transaction).then((res) => {
+    if (res.error) {
+      // 에러처리
+    } else if (res.requestId) {
+      // requestId 보관 및 처리
+    }
+})
+```
+
+### Result
+
+App2App 요청에 대한 결과를 확인합니다.
+
+#### Request Parameter
+
+요청 결과 확인 시 필요한 매개변수
+
+| Key       | Type   | Value               | Required |
+| --------- | ------ | ------------------- | -------- |
+| requestId | string | App2App 요청 식별자 | true     |
+
+#### Response Parameter
+
+요청 결과 확인 시 응답 매개변수
+
+| Key     | Type   | Value                                                                                                                                                                                     | Required |
+| ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| status  | string | 상태 유형<br>&nbsp;&nbsp;&nbsp;• proposal (실행 요청)<br>&nbsp;&nbsp;&nbsp;• completed (실행 완료)<br>&nbsp;&nbsp;&nbsp;• canceled (실행 취소)<br>&nbsp;&nbsp;&nbsp;• expired (시간 만료) | true     |
+| address | string | 인증된 지갑 주소                                                                                                                                                                          | false    |
+| tx_hash | string | 결과에 대한 트랜잭션 해시                                                                                                                                                                 | false    |
+
+#### wemixSDK.getResult
+
+App2App API 요청에 대한 결과를 확인합니다.
+
+**Example**
+
+```javascript
+wemixSDK.getResult(requestId).then((res) => {
+  if (res.error) {
+    // 에러 처리
+  } else if (res.status) {
+    // status에 따른 처리
+  }
+});
+```
+
+## Directory 구조
+
+```
+project
+│── dist/
+│   ├── esm/
+│   │   ├── wemixSDK.js
+│   │   └── wemixSDK.min.js
+│   ├── wemixSDK.js
+│   └── wemixSDK.min.js
+│── example/
+│   ├── constants.js
+│   ├── index.html
+│   ├── index.js
+│   ├── style.css
+│── src/
+│   ├── components/
+│   │   ├── auth.ts
+│   │   ├── executeContract.ts
+│   │   ├── getErrorMsg.ts
+│   │   ├── getResult.ts
+│   │   ├── sendNFT.ts
+│   │   ├── sendToken.ts
+│   │   └── sendWemix.ts
+│   ├── constants.ts
+│   ├── constructor.ts
+│   ├── index.ts
+│   └── type.ts
+│── package.json
+│── rollup.config.js
+└── tsconfig.json
+...
+```
+
+- `dist/` : 빌드된 파일 (umd 모듈)
+- `dist/esm/` : 빌드된 파일 (esm 모듈)
+- `example/` : JS SDK 예제 코드
+- `src/`: SDK 소스 코드
+- `package.json`: 프로젝트 속성 정의
+- `rollup.config.js` : 롤업 설정 파일
+- `tsconfig.json` : Typescript 설정 파일
 
 ## License
 
