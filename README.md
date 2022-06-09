@@ -5,8 +5,6 @@ Wemix A2A JavaScript SDK는 Wemix Wallet에 App2App 요청을 간편하게 처�
 
 ## 설치 방법
 
-### 직접 파일을 다운 받아 사용하는 경우
-
 [다운로드 페이지](https://www.naver.com)에서 파일을 다운받은 후, 다운 받은 파일을 repository에 복사합니다. HTML 파일에 다음과 같이 스크립트 태그를 삽입합니다.
 
 ```html
