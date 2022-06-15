@@ -80,7 +80,7 @@ const meta = {
 
 | Key      | Type   | Value                                                      | Required |
 | -------- | ------ | ---------------------------------------------------------- | -------- |
-| from     | string | 전송자의 주소. 지갑 사용자가 맞는지 확인용                 | false    |
+| from     | string | 전송자의 주소. 지갑 사용자가 맞는지 확인용                 | true     |
 | to       | string | 전송 시 수신 주소                                          | false    |
 | value    | string | 전송하려는 코인 또는 토큰 수량, 10^18 기준                 | false    |
 | contract | string | 토큰 전송, NFT 전송, 컨트랙트 실행 시 해당 컨트랙트의 주소 | false    |
