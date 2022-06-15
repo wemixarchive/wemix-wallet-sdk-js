@@ -1,7 +1,6 @@
 import QRCode from "../node_modules/qrcode/lib";
 import { abi_sample, explorer_url, params_sample } from "./constants";
-// const wemixSDK = require("../dist/wemixSDK");
-import wemixSDK from "../src/index";
+const wemixSDK = require("../dist/wemixSDK");
 
 const { SendWemix, SendToken, SendNFT, ContractExecute } =
   wemixSDK.txConstructor;
