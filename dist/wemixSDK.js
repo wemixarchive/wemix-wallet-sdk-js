@@ -65,190 +65,6 @@
         return String(error);
     }
 
-    function auth(meta_Data) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response, res, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, fetch(baseURL + "/proposal", {
-                                method: "POST",
-                                headers: {
-                                    Accept: "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    metadata: meta_Data,
-                                    type: "auth",
-                                }),
-                            })];
-                    case 1:
-                        response = _a.sent();
-                        return [4 /*yield*/, response.json()];
-                    case 2:
-                        res = _a.sent();
-                        if (res.errorMessage) {
-                            throw new Error(res.errorMessage);
-                        }
-                        return [2 /*return*/, { requestId: res === null || res === void 0 ? void 0 : res.requestId }];
-                    case 3:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, { error: getErrorMsg(error_1) }];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    }
-
-    function sendWemix(meta_data, send_wemix) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response, res, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, fetch(baseURL + "/proposal", {
-                                method: "POST",
-                                headers: {
-                                    Accept: "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    metadata: meta_data,
-                                    type: "send",
-                                    transaction: send_wemix,
-                                }),
-                            })];
-                    case 1:
-                        response = _a.sent();
-                        return [4 /*yield*/, response.json()];
-                    case 2:
-                        res = _a.sent();
-                        if (res.errorMessage) {
-                            throw new Error(res.errorMessage);
-                        }
-                        return [2 /*return*/, { requestId: res === null || res === void 0 ? void 0 : res.requestId }];
-                    case 3:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, { error: getErrorMsg(error_1) }];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    }
-
-    function sendToken(meta_data, send_token) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response, res, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, fetch(baseURL + "/proposal", {
-                                method: "POST",
-                                headers: {
-                                    Accept: "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    metadata: meta_data,
-                                    type: "send_token",
-                                    transaction: send_token,
-                                }),
-                            })];
-                    case 1:
-                        response = _a.sent();
-                        return [4 /*yield*/, response.json()];
-                    case 2:
-                        res = _a.sent();
-                        if (res.errorMessage) {
-                            throw new Error(res.errorMessage);
-                        }
-                        return [2 /*return*/, { requestId: res === null || res === void 0 ? void 0 : res.requestId }];
-                    case 3:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, { error: getErrorMsg(error_1) }];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    }
-
-    function sendNFT(meta_data, send_nft) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response, res, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, fetch(baseURL + "/proposal", {
-                                method: "POST",
-                                headers: {
-                                    Accept: "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    metadata: meta_data,
-                                    type: "send_nft",
-                                    transaction: send_nft,
-                                }),
-                            })];
-                    case 1:
-                        response = _a.sent();
-                        return [4 /*yield*/, response.json()];
-                    case 2:
-                        res = _a.sent();
-                        if (res.errorMessage) {
-                            throw new Error(res.errorMessage);
-                        }
-                        return [2 /*return*/, { requestId: res === null || res === void 0 ? void 0 : res.requestId }];
-                    case 3:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, { error: getErrorMsg(error_1) }];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    }
-
-    function executeContract(meta_data, contract_execute) {
-        return __awaiter(this, void 0, void 0, function () {
-            var response, res, error_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, fetch(baseURL + "/proposal", {
-                                method: "POST",
-                                headers: {
-                                    Accept: "application/json",
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    metadata: meta_data,
-                                    type: "contract_execute",
-                                    transaction: contract_execute,
-                                }),
-                            })];
-                    case 1:
-                        response = _a.sent();
-                        return [4 /*yield*/, response.json()];
-                    case 2:
-                        res = _a.sent();
-                        if (res.errorMessage) {
-                            throw new Error(res.errorMessage);
-                        }
-                        return [2 /*return*/, { requestId: res === null || res === void 0 ? void 0 : res.requestId }];
-                    case 3:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, { error: getErrorMsg(error_1) }];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    }
-
     function getResult(request_id) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
@@ -284,11 +100,48 @@
         });
     }
 
+    function proposal(metadata, transaction) {
+        return __awaiter(this, void 0, void 0, function () {
+            var bodyData, response, res, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        bodyData = transaction
+                            ? { metadata: metadata, type: transaction.type, transaction: transaction }
+                            : { metadata: metadata, type: "auth" };
+                        return [4 /*yield*/, fetch(baseURL + "/proposal", {
+                                method: "POST",
+                                headers: {
+                                    Accept: "application/json",
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(bodyData),
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        return [4 /*yield*/, response.json()];
+                    case 2:
+                        res = _a.sent();
+                        if (res.errorMessage) {
+                            throw new Error(res.errorMessage);
+                        }
+                        return [2 /*return*/, { requestId: res === null || res === void 0 ? void 0 : res.requestId }];
+                    case 3:
+                        error_1 = _a.sent();
+                        return [2 /*return*/, { error: getErrorMsg(error_1) }];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    }
+
     var SendWemix = /** @class */ (function () {
         function SendWemix(from, to, value) {
             this.from = from;
             this.to = to;
             this.value = value;
+            this.type = "send";
         }
         return SendWemix;
     }());
@@ -298,6 +151,7 @@
             this.to = to;
             this.value = value;
             this.contract = contract;
+            this.type = "send_token";
         }
         return SendToken;
     }());
@@ -307,6 +161,7 @@
             this.to = to;
             this.contract = contract;
             this.tokenId = tokenId;
+            this.type = "send_nft";
         }
         return SendNFT;
     }());
@@ -316,17 +171,14 @@
             this.to = contract;
             this.abi = abi;
             this.params = params;
+            this.type = "contract_execute";
         }
         return ContractExecute;
     }());
 
     var wemixSDK = {
-        auth: auth,
-        sendWemix: sendWemix,
-        sendToken: sendToken,
-        sendNFT: sendNFT,
-        executeContract: executeContract,
         getResult: getResult,
+        proposal: proposal,
         txConstructor: { SendWemix: SendWemix, SendToken: SendToken, SendNFT: SendNFT, ContractExecute: ContractExecute },
     };
 

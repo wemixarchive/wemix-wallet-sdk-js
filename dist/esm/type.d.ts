@@ -1,3 +1,13 @@
+export interface Transaction {
+    from: string;
+    to?: string;
+    value?: string;
+    contract?: string;
+    tokenId?: string;
+    abi?: string;
+    params?: string;
+    type: string;
+}
 export interface ERROR_RES {
     error: string;
 }

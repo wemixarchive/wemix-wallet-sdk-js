@@ -1,23 +1,24 @@
 import { baseURL } from "../constants";
-import { ERROR_RES, METADATA, PROPOSAL_RES, SEND_NFT } from "../type";
+import { Transaction } from "../type";
+import { ERROR_RES, METADATA, PROPOSAL_RES } from "../type";
 import { getErrorMsg } from "./getErrorMsg";
 
-export async function sendNFT(
-  meta_data: METADATA,
-  send_nft: SEND_NFT
+export async function proposal(
+  metadata: METADATA,
+  transaction: Transaction
 ): Promise<PROPOSAL_RES | ERROR_RES> {
   try {
+    const bodyData = transaction
+      ? { metadata, type: transaction.type, transaction }
+      : { metadata, type: "auth" };
+
     const response = await fetch(baseURL + "/proposal", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        metadata: meta_data,
-        type: "send_nft",
-        transaction: send_nft,
-      }),
+      body: JSON.stringify(bodyData),
     });
 
     const res = await response.json();

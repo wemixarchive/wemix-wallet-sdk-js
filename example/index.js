@@ -1,6 +1,7 @@
 import QRCode from "../node_modules/qrcode/lib";
 import { abi_sample, explorer_url, params_sample } from "./constants";
-const wemixSDK = require("../dist/wemixSDK");
+// const wemixSDK = require("../dist/wemixSDK");
+import wemixSDK from "../src/index";
 
 const { SendWemix, SendToken, SendNFT, ContractExecute } =
   wemixSDK.txConstructor;
@@ -145,7 +146,7 @@ function showQRCode(requestId) {
  */
 function authHandler() {
   // 인증 요청
-  wemixSDK.auth(meta).then((res) => {
+  wemixSDK.proposal(meta).then((res) => {
     if (res.error) {
       alert(`Error: ${res.error}`);
     } else if (res.requestId) {
@@ -174,7 +175,7 @@ function sendWemixHandler() {
   const transaction = new SendWemix(from, to, requestValue);
 
   // 전송 요청
-  wemixSDK.sendWemix(meta, transaction).then((res) => {
+  wemixSDK.proposal(meta, transaction).then((res) => {
     if (res.error) {
       alert(`Error: ${res.error}`);
     } else if (res.requestId) {
@@ -205,7 +206,7 @@ function sendTokenHandler() {
   const transaction = new SendToken(from, to, requestValue, contract);
 
   // 전송 요청
-  wemixSDK.sendToken(meta, transaction).then((res) => {
+  wemixSDK.proposal(meta, transaction).then((res) => {
     if (res.error) {
       alert(`Error: ${res.error}`);
     } else if (res.requestId) {
@@ -236,7 +237,7 @@ function sendNFTHandler() {
   const transaction = new SendNFT(from, to, contract, tokenId);
 
   // 전송 요청
-  wemixSDK.sendNFT(meta, transaction).then((res) => {
+  wemixSDK.proposal(meta, transaction).then((res) => {
     if (res.error) {
       alert(`Error: ${res.error}`);
     } else if (res.requestId) {
@@ -267,7 +268,7 @@ function executeContractHandler() {
   const transaction = new ContractExecute(from, contract, abi, params);
 
   // 전송 요청
-  wemixSDK.executeContract(meta, transaction).then((res) => {
+  wemixSDK.proposal(meta, transaction).then((res) => {
     if (res.error) {
       alert(`Error: ${res.error}`);
     } else if (res.requestId) {
