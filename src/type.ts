@@ -21,11 +21,11 @@ export interface RESULT_RES {
 
 export interface METADATA {
   name: string;
-  description: string;
-  url: string;
-  icon: string;
-  successCallback: string;
-  failureCallback: string;
+  description?: string;
+  url?: string;
+  icon?: string;
+  successCallback?: string;
+  failureCallback?: string;
 }
 
 export interface PROPOSAL_RES {

@@ -8,6 +8,23 @@ export async function proposal(
   transaction: Transaction
 ): Promise<PROPOSAL_RES | ERROR_RES> {
   try {
+    // metadata 들어왔는지 검증
+    if (!metadata) {
+      throw new Error("metadata is required");
+    }
+
+    // metadata name 값 들어왔는지 검증
+    if (metadata && !metadata.name) {
+      throw new Error(`The name of a metadata cannot be ${metadata.name}`);
+    }
+
+    // 트랜잭션 from 값 들어왔는지 검증
+    if (transaction && !transaction.from) {
+      throw new Error(
+        `The from of a transaction cannot be ${transaction.from}`
+      );
+    }
+
     const bodyData = transaction
       ? { metadata, type: transaction.type, transaction }
       : { metadata, type: "auth" };
