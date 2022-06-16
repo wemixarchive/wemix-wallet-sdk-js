@@ -14,13 +14,13 @@ const buildConfig = (config) => {
     },
     plugins: [
       typescript({
-        useTsconfigDeclarationDir: false,
-        tsconfigDefaults: require("./tsconfig.json"),
+        useTsconfigDeclarationDir: false, // 선언 파일을 위치를 tsconfig에서 지정하는 것이 아니라 롤업 구성에 위치
+        tsconfig: "tsconfig.json", // tsconfig 파일 명시
       }),
-      json(),
-      resolve(),
-      commonjs(),
-      minified && terser(),
+      json(), // json 파일 불러오기
+      resolve(), // 서드파티(외부) 모듈 사용 가능, ts/tsx파일도 불러올 수 있음
+      commonjs(), // commonjs 모듈을 es모듈로 변환
+      minified && terser(), // 파일 최소화 (.min.js 생성)
       ...(config.plugins || []),
     ],
   });
@@ -36,7 +36,7 @@ export default async () => {
     ...buildConfig({
       output: {
         file: `dist/${outputFileName}`,
-        name: name,
+        name: name, // global name
         format: "umd",
         exports: "default",
       },
