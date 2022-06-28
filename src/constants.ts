@@ -1,1 +1,5 @@
-export const baseURL: string = "http://wma2a.metadium.com/api/v1/a2a";
+export let baseURL: string = "http://a2a.test.wemix.com/api/v1/a2a";
+
+export function setBaseURL(newURL: string): void {
+  baseURL = newURL;
+}

@@ -43,10 +43,30 @@ npm run example
 
 ### 개요
 
-JavaScript SDK에서 App2App 요청은 크게 `Proposal`, `Result`의 순서로 진행이 됩니다.
+JavaScript SDK에서 App2App 요청은 크게 `BaseURL`, `Proposal`, `Result`의 순서로 진행이 됩니다.
 
+- `BaseURL`은 App2App 요청에 대한 baseURL을 세팅
 - `Proposal`은 DApp에서 실행할 작업을 요청하는 단계로 총 5가지 종류의 요청이 존재
 - `Result`는 함수 호출을 통해 결과값을 받고 확인
+
+### BaseURL
+
+App2App 요청을 보낼 baseURL을 세팅합니다.
+
+#### Set BaseURL
+
+특정 URL로 App2App 요청이 필요할 시 baseURL을 세팅합니다.
+
+- baseURL을 세팅하지 않을 시 Wemix 테스트넷 API로 App2App 요청이 전송됩니다.
+
+**Example**
+
+```javascript
+const myBaseURL = "http://a2a.test.wemix.com/api/v1/a2a";
+
+// 선택사항
+wemixSDK.setBaseURL(myBaseURL);
+```
 
 ### Proposal
 

@@ -57,7 +57,10 @@
         }
     }
 
-    var baseURL = "http://wma2a.metadium.com/api/v1/a2a";
+    var baseURL = "http://a2a.test.wemix.com/api/v1/a2a";
+    function setBaseURL(newURL) {
+        baseURL = newURL;
+    }
 
     function getErrorMsg(error) {
         if (error instanceof Error)
@@ -191,6 +194,7 @@
     var wemixSDK = {
         getResult: getResult,
         proposal: proposal,
+        setBaseURL: setBaseURL,
         txConstructor: { SendWemix: SendWemix, SendToken: SendToken, SendNFT: SendNFT, ContractExecute: ContractExecute },
     };
 
