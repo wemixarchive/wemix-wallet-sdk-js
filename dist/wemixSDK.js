@@ -57,7 +57,8 @@
         }
     }
 
-    var baseURL = "https://a2a.test.wemix.com/api/v1/a2a";
+    // default로 메인넷 url 설정
+    var baseURL = "https://a2a.wemix.com/api/v1/a2a";
     function setBaseURL(newURL) {
         baseURL = newURL;
     }
