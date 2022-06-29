@@ -43,7 +43,7 @@ let params = params_sample;
 let event_func = null;
 
 // baseURL 커스텀 세팅 (선택사항)
-wemixSDK.setBaseURL("http://a2a.test.wemix.com/api/v1/a2a");
+wemixSDK.setBaseURL("https://a2a.test.wemix.com/api/v1/a2a");
 
 // 요청하는 앱의 서비스 정보
 const meta = {

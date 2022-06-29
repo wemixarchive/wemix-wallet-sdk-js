@@ -62,7 +62,7 @@ App2App 요청을 보낼 baseURL을 세팅합니다.
 **Example**
 
 ```javascript
-const myBaseURL = "http://a2a.test.wemix.com/api/v1/a2a";
+const myBaseURL = "https://a2a.test.wemix.com/api/v1/a2a";
 
 // 선택사항
 wemixSDK.setBaseURL(myBaseURL);
