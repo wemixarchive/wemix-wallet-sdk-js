@@ -1,8 +1,8 @@
 {
-  "name": "wemix-sdk",
-  "version": "1.2.8",
-  "description": "JavaScript SDK to interact with Wemix App2App requests",
-  "main": "dist/wemixSDK.min.js",
+  "name": "@wemix3/wallet-sdk",
+  "version": "0.8.0",
+  "description": "SDK for Javascript that connect WEMIX Wallet App to dApp.",
+  "main": "dist/wemixSDK.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
@@ -11,10 +11,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "the repositories url"
+    "url": "https://github.com/wemixarchive/wemix-wallet-sdk-js.git"
   },
-  "author": "puremax",
+  "keywords": [
+    "wemix",
+    "wallet"
+  ],
+  "author": "WEMIX PTE. LTD",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wemixarchive/wemix-wallet-sdk-js/issues"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
