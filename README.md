@@ -57,7 +57,7 @@ App2App 요청을 보낼 baseURL을 세팅합니다.
 
 특정 URL로 App2App 요청이 필요할 시 baseURL을 세팅합니다.
 
-- baseURL을 세팅하지 않을 시 Wemix 테스트넷 API로 App2App 요청이 전송됩니다.
+- baseURL을 세팅하지 않을 시 Wemix 메인넷 API로 App2App 요청이 전송됩니다.
 
 **Example**
 
