@@ -10,7 +10,7 @@ It is possible to operate in an environment where HTTP(s) communication is basic
 
 ### In NPM environment
 
-Install SDK with NPM or YAM
+Install SDK with NPM or YARN
 
 ```sh
 npm install @wemix3/wallet-sdk
