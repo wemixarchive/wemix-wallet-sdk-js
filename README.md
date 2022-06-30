@@ -30,7 +30,7 @@ import wemixSDK from "@wemix3/wallet-sdk";
 
 ### If you download and use the file
 
-- [Download SDK](dist/wemixSDK.js) file and move to the repository
+- [Download SDK](dist) file and move to the repository
 - Add script to the HTML file as shown below
 
 ```html
