@@ -37,6 +37,18 @@ import wemixSDK from "@wemix3/wallet-sdk";
 <script src="./lib/wemixSDK.js"></script>
 ```
 
+### Setup Network
+
+Can change the network if necessary. The default network is Mainnet, but it is not currently available.
+
+**Be sure to set it as testnet.**
+
+- Testnet : https://a2a.test.wemix.com/api/v1/a2a
+
+```javascript
+wemixSDK.setBaseURL("https://a2a.test.wemix.com/api/v1/a2a");
+```
+
 ## Run Example codes
 
 To run Example codes, either NPM environment or Parcel installation is required.
