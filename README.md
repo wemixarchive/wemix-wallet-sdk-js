@@ -1,298 +1,289 @@
-# Wemix A2A JavaScript SDK
+# Wemix Wallet JavaScript SDK
 
-Wemix A2A JavaScript SDK는 Wemix Wallet에 App2App 요청을 간편하게 처리하도록 도와주는 라이브러리입니다.
-더 자세한 설명 및 사용 방법은 [개발자 문서](https://www.임시.com/)를 참고해주세요.
+## Requirements
 
-## 설치 방법
+- In NPM environment : Node 10 or above recommended
 
-[다운로드 페이지](https://www.임시.com)에서 파일을 다운받은 후, 다운 받은 파일을 repository에 복사합니다. HTML 파일에 다음과 같이 스크립트 태그를 삽입합니다.
+## Settings
+
+It is possible to operate in an environment where HTTP(s) communication is basically possible without a separate subscription procedure.
+
+### In NPM environment
+
+Install SDK with NPM or YAM
+
+```sh
+npm install @wemix3/wallet-sdk
+```
+
+or
+
+```sh
+yarn add @wemix3/wallet-sdk
+```
+
+Import ES module
+
+```javascript
+import wemixSDK from "@wemix3/wallet-sdk";
+```
+
+### If you download and use the file
+
+- [Download SDK](dist/wemixSDK.js) file and move to the repository
+- Add script to the HTML file as shown below
 
 ```html
 <script src="./lib/wemixSDK.js"></script>
 ```
 
-ES 모듈 사용 시 아래와 같이 삽입합니다.
+## Run Example codes
 
-```javascript
-import wemixSDK from "./lib/wemixSDK.js";
-```
+To run Example codes, either NPM environment or Parcel installation is required.
 
-이후 (글로벌 네임스페이스에) 선언된 wemixSDK 변수를 활용하여 각 메소드에 접근합니다.
+### Setup Parcel
 
-```javascript
-wemixSDK.proposal(...)
-wemixSDK.getResult(...)
-{ SendWemix, SendToken, SendNFT, ContractExecute } = wemixSDK.txConstructor
-```
-
-## Example 실행
-
-**parcel 추가**
-
-```
+```sh
 npm install -g parcel-bundler
 ```
 
-**예제 실행**
+### Run Example code
 
-```
+```sh
 npm run example
 ```
 
 ## API
 
-### 개요
+### Overview
 
-JavaScript SDK에서 App2App 요청은 크게 `BaseURL`, `Proposal`, `Result`의 순서로 진행이 됩니다.
+Request for App-to-App in Javascript SDK happens in the order of `Proposal`, `Request`, `Result`.
 
-- `BaseURL`은 App2App 요청에 대한 baseURL을 세팅
-- `Proposal`은 DApp에서 실행할 작업을 요청하는 단계로 총 5가지 종류의 요청이 존재
-- `Result`는 함수 호출을 통해 결과값을 받고 확인
-
-### BaseURL
-
-App2App 요청을 보낼 baseURL을 세팅합니다.
-
-#### Set BaseURL
-
-특정 URL로 App2App 요청이 필요할 시 baseURL을 세팅합니다.
-
-- baseURL을 세팅하지 않을 시 Wemix 메인넷 API로 App2App 요청이 전송됩니다.
-
-**Example**
-
-```javascript
-const myBaseURL = "https://a2a.test.wemix.com/api/v1/a2a";
-
-// 선택사항
-wemixSDK.setBaseURL(myBaseURL);
-```
+- `Proposal`: A stage that requests a task to be performed by a dApp There are 5 different types of requests.
+- `Request`: Runs the WEMIX Wallet on the QR Code to continue the signing process.
+- `Result`: Receive and check the result value by calling the function.
 
 ### Proposal
 
-실행할 App2App 요청을 보내고 request Id를 받습니다.
+Use wemixSDK.proposal (metaData, transaction) function to serve 5 requests depending on the transaction.
 
-#### Request Parameter
+- `null` : Request wallet address
+- `SendWemix` : Request WEMIX transfer
+- `SendToken` : Request Token transfer
+- `SendNFT` : Request NFT transfer
+- `ContractExecute` : Request ContractExecute
 
-요청 시 필요한 매개변수
+### MetaData
 
-**metadata**
+In order to request a Proposal, information about the dApp is required. The information about the dApp must be provided through the METADATA interface.
 
-| Key         | Type   | Value                | Required |
-| ----------- | ------ | -------------------- | -------- |
-| name        | string | DApp 이름            | true     |
-| description | string | 요청 설명            | true     |
-| url         | string | DApp 대표 URL        | false    |
-| icon        | string | DApp 로고 이미지 URL | false    |
+#### METADATA
 
-Example
+| Property    | Type   | Value                       | Required |
+| ----------- | ------ | --------------------------- | -------- |
+| name        | string | Name of dApp                | true     |
+| description | string | About the request. Reserved | true     |
+| url         | string | Main URL of dApp. Reserved  | false    |
+| icon        | string | URL of dApp logo. Reserved  | false    |
 
 ```javascript
-const meta = {
-  name: "Wemix DApp Name",
-  description: "JS SDK Test Request",
-  url: "대표 URL",
-  icon: "로고 이미지 URL",
+const metaData = {
+  name: "WEMIX test dApp",
+  description: "Test Proposal",
+  url: "https://test-dApp.wemix.com",
+  icon: "https://test-dApp.wemix.com/logo.png",
 };
 ```
 
-**transaction**
+### Auth
 
-| Key      | Type   | Value                                                      | Required |
-| -------- | ------ | ---------------------------------------------------------- | -------- |
-| from     | string | 전송자의 주소. 지갑 사용자가 맞는지 확인용                 | true     |
-| to       | string | 전송 시 수신 주소                                          | false    |
-| value    | string | 전송하려는 코인 또는 토큰 수량, 10^18 기준                 | false    |
-| contract | string | 토큰 전송, NFT 전송, 컨트랙트 실행 시 해당 컨트랙트의 주소 | false    |
-| tokenId  | string | 전송하려는 NFT token Id                                    | false    |
-| abi      | string | 스마트 컨트랙트 실행 시 함수의 abi                         | false    |
-| params   | string | 스마트 컨트랙트 실행 시 함수 파라미터                      | false    |
-
-Example
-
-```javascript
-new SendWemix(from, to, value);
-new SendToken(from, to, value, contract);
-new SendNFT(from, to, contract, tokenId);
-new ContractExecute(from, contract, abi, params);
-```
-
-#### Response Parameter
-
-요청시 응답 매개변수
-
-| Key       | Type   | Value               | Required |
-| --------- | ------ | ------------------- | -------- |
-| requestId | string | App2App 요청 식별자 | true     |
-
-#### Auth
-
-지갑을 인증하는 요청입니다.
+This function requests an authentication of the user’s wallet, and the address of the user wallet can be confirmed when the authentication is completed.
 
 **Example**
 
 ```javascript
-const meta = {...}  // metadata
-
-wemixSDK.proposal(meta).then((res) => {
-    if (res.error) {
-      // 에러 처리
-    } else if (res.requestId) {
-      // requestId 보관 및 처리
-    }
-})
+wemixSDK.proposal(metaData).then((res) => {
+  if (res.error) {
+    // Handling errors
+  } else if (res.requestId) {
+    // requestId Storage and processing
+  }
+});
 ```
 
-#### Send Wemix
+### SendWemix
 
-유저가 보유한 코인을 특정 주소로 전송하는 요청입니다.
+This is a request to send the user’s WEMIX to a specific address. After the approval of the request, the user can check the transactionHash of the request.
+
+**SendWemix(from, to, value)**
+
+| Parameter | Type   | Value                                                    |
+| --------- | ------ | -------------------------------------------------------- |
+| from      | string | Address of the sender (Wallet User Verification Purpose) |
+| to        | string | Address of the recipient                                 |
+| value     | string | Amount of WEMIX to send (unit : wei)                     |
 
 **Example**
 
 ```javascript
-const meta = {...}
-const transaction = new SendWemix(...)
-
-wemixSDK.proposal(meta, transaction).then((res) => {
-    if (res.error) {
-      // 에러 처리
-    } else if (res.requestId) {
-      // requestId 보관 및 처리
-    }
-})
+// send 1 WEMIX to 0xFb0... from 0x9a...
+const transaction = new SendWemix("0x9a...", "0xFb0...", "1000000000000000000");
+wemixSDK.proposal(metaData, transaction).then((res) => {
+  if (res.error) {
+    // Handling errors
+  } else if (res.requestId) {
+    // requestId Storage and processing
+  }
+});
 ```
 
-#### Send Token
+### SendToken
 
-유저가 보유한 토큰을 특정 주소로 전송하는 요청입니다.
+This is a request to send the user’s Token to a specific address. After the approval of the request, the user can check the transactionHash of the request.
+
+**SendNFT(from, to, contract, tokenId)**
+
+| Parameter | Type   | Value                                                    |
+| --------- | ------ | -------------------------------------------------------- |
+| from      | string | Address of the sender (Wallet User Verification Purpose) |
+| to        | string | Address of the recipient                                 |
+| value     | string | Amount of Token to send **(including decimals)**         |
+| contract  | string | Address of the token contract                            |
 
 **Example**
 
 ```javascript
-const meta = {...}
-const transaction = new SendToken(...)
-
-wemixSDK.proposal(meta, transaction).then((res) => {
-    if (res.error) {
-      // 에러 처리
-    } else if (res.requestId) {
-      // requestId 보관 및 처리
-    }
-})
+// 1 token is sent from 0x9a... to 0xFb0... in the 0xa8b.. contract. (if decimal is 0)
+const transaction = new SendToken("0x9a...", "0xFb0...", "1", "0xa8b...");
+wemixSDK.proposal(metaData, transaction).then((res) => {
+  if (res.error) {
+    // Handling errors
+  } else if (res.requestId) {
+    // requestId Storage and processing
+  }
+});
 ```
 
-#### Send NFT
+### SendNFT
 
-유저가 보유한 NFT를 특정 주소로 전송하는 요청입니다.
+This is a request to send the user’s NFT to a specific address. After the approval of the request, the user can check the transactionHash of the request.
+
+**SendNFT(from, to, contract, tokenId)**
+
+| Parameter | Type   | Value                                                    |
+| --------- | ------ | -------------------------------------------------------- |
+| from      | string | Address of the sender (Wallet User Verification Purpose) |
+| to        | string | Address of the recipient                                 |
+| contract  | string | Address of the NFT contract                              |
+| tokenId   | string | Token ID of the NFT                                      |
 
 **Example**
 
 ```javascript
-const meta = {...}
-const transaction = new SendNFT(...)
-
-wemixSDK.proposal(meta, transaction).then((res) => {
-    if (res.error) {
-      // 에러 처리
-    } else if (res.requestId) {
-      // requestId 보관 및 처리
-    }
-})
+// In the 0xa8b.. contract, tokenId 12 is sent from 0x9a... to 0xFb0....
+const transaction = new SendNFT("0x9a...", "0xFb0...", "0xa8b...", "12");
+wemixSDK.proposal(metaData, transaction).then((res) => {
+  if (res.error) {
+    // Handling errors
+  } else if (res.requestId) {
+    // requestId Storage and processing
+  }
+});
 ```
 
-#### Execute Contract
+### ContractExcute
 
-유저가 특정 컨트랙트의 함수를 실행하도록 하는 요청입니다.
+This is a request to execute a specific contract. After the approval of the request, the user can check the transactionHash of the request.
+
+**ContractExecute(from, contract, abi, params)**
+
+| Parameter | Type   | Value                                                    |
+| --------- | ------ | -------------------------------------------------------- |
+| from      | string | Address of the sender (Wallet User Verification Purpose) |
+| contract  | string | Address of contract                                      |
+| abi       | string | abi of the function (json object)                        |
+| params    | string | Parameters of the function (json array)                  |
 
 **Example**
 
 ```javascript
-const meta = {...}
-const transaction = new ContractExecute(...)
+// 0xa8b.. Execute transfer function in contract.
+const transaction = new ContractExecute(
+  "0x9a...",
+  "0xa8b...",
+  JSON.stringify({
+    constant: false,
+    inputs: [
+      { name: "_to", type: "address" },
+      { name: "_value", type: "uint256" },
+    ],
+    name: "transfer",
+    outputs: [{ name: "success", type: "bool" }],
+    payable: false,
+    type: "function",
+  }),
+  JSON.stringify([
+    "0xcad9042cf49684939a2f42c2d916d1b6526635c2",
+    5000000000000000000,
+  ])
+);
+wemixSDK.proposal(metaData, transaction).then((res) => {
+  if (res.error) {
+    // Handling errors
+  } else if (res.requestId) {
+    // requestId Storage and processing
+  }
+});
+```
 
-wemixSDK.proposal(meta, transaction).then((res) => {
-    if (res.error) {
-      // 에러처리
-    } else if (res.requestId) {
-      // requestId 보관 및 처리
-    }
-})
+### Request
+
+A user can create a Scheme that calls the app with the request ID received from Proposal and make a request to the WEMIX Wallet app with a QRCode or scheme call.
+
+**Scheme**
+
+```
+wemix://wallet?requestId={request_id}
+```
+
+**Example**
+
+```
+wemix://wallet?requestId=569308f1-5d21-4ffc-abc5-1c3f4fcd12b7
 ```
 
 ### Result
 
-App2App 요청에 대한 결과를 확인합니다.
+A user can confirm the reaction of requestId after the approval.
 
-#### Request Parameter
+**wemixSDK.getResult(requestId)**
 
-요청 결과 확인 시 필요한 매개변수
+**Request**
 
-| Key       | Type   | Value               | Required |
-| --------- | ------ | ------------------- | -------- |
-| requestId | string | App2App 요청 식별자 | true     |
+| Parameter | Type   | Value                            |
+| --------- | ------ | -------------------------------- |
+| requestId | string | Received requestId from Proposal |
 
-#### Response Parameter
+**Response**
 
-요청 결과 확인 시 응답 매개변수
-
-| Key     | Type   | Value                                                                                                                                                                                     | Required |
-| ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| status  | string | 상태 유형<br>&nbsp;&nbsp;&nbsp;• proposal (실행 요청)<br>&nbsp;&nbsp;&nbsp;• completed (실행 완료)<br>&nbsp;&nbsp;&nbsp;• canceled (실행 취소)<br>&nbsp;&nbsp;&nbsp;• expired (시간 만료) | true     |
-| address | string | 인증된 지갑 주소                                                                                                                                                                          | false    |
-| tx_hash | string | 요청 결과에 대한 트랜잭션 해시                                                                                                                                                            | false    |
-
-#### Get Result
-
-App2App API 요청에 대한 결과를 확인합니다.
+| Key     | Type   | Value                                                                                                                                                                                                  |
+| ------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| status  | string | Status Type<br>&nbsp;&nbsp;• proposal (Request execution)<br>&nbsp;&nbsp;• completed (Execution completed)<br>&nbsp;&nbsp;• canceled (Execution canceled)<br>&nbsp;&nbsp;• expired (Execution expired) |
+| address | string | Verified address of the wallet (Returned only when requested by wemixSDK.auth)                                                                                                                         |
+| tx_hash | string | Transaction hash of the result (Returned only when requested by wemixSDK.(sendWemix, sendToken, sendNFT, executeContract)                                                                              |
 
 **Example**
 
 ```javascript
 wemixSDK.getResult(requestId).then((res) => {
   if (res.error) {
-    // 에러 처리
-  } else if (res.status) {
-    // status에 따른 처리
+    // Handling errors
+  } else if (res.status && res.status === "completed") {
+    // res.address <= Only Auth
+    // res.tx_hash
   }
 });
 ```
-
-## Directory 구조
-
-```
-project
-│── dist/
-│   ├── esm/
-│   │   ├── wemixSDK.js
-│   │   └── wemixSDK.min.js
-│   ├── wemixSDK.js
-│   └── wemixSDK.min.js
-│── example/
-│   ├── constants.js
-│   ├── index.html
-│   ├── index.js
-│   ├── style.css
-│── src/
-│   ├── components/
-│   │   ├── getErrorMsg.ts
-│   │   ├── getResult.ts
-│   │   └── proposal.ts
-│   ├── constants.ts
-│   ├── constructor.ts
-│   ├── index.ts
-│   └── type.ts
-│── package.json
-│── rollup.config.js
-└── tsconfig.json
-```
-
-- `dist/` : 빌드된 파일 (umd 모듈)
-- `dist/esm/` : 빌드된 파일 (esm 모듈)
-- `example/` : JS SDK 예제 코드
-- `src/`: SDK 소스 코드
-- `package.json`: 프로젝트 속성 정의
-- `rollup.config.js` : 롤업 설정 파일
-- `tsconfig.json` : Typescript 설정 파일
 
 ## License
 
