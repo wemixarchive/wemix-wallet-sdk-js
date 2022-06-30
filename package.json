@@ -1,6 +1,6 @@
 {
   "name": "@wemix3/wallet-sdk",
-  "version": "0.8.0",
+  "version": "0.8.2",
   "description": "SDK for Javascript that connect WEMIX Wallet App to dApp.",
   "main": "dist/wemixSDK.js",
   "types": "dist/index.d.ts",
