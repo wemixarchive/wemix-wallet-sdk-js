@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>wemix-wallet-sdk-js sample</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:400,900"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+      integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU"
+      crossorigin="anonymous"
+    ></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>wemix-wallet-sdk-js sample</title>
-  <link href="https://fonts.googleapis.com/css?family=Lato:400,900" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/mvp.css">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-</head>
+  <body>
+    <div class="mainDiv">
+      <button id="auth" class="mainBtn">지갑연결</button>
+      <button id="wemix_send" class="mainBtn">Wemix 전송 요청</button>
+      <button id="token_send" class="mainBtn">Token 전송 요청</button>
+      <button id="nft_send" class="mainBtn">NFT 전송 요청</button>
+      <button id="contract_execute" class="mainBtn">Contract 실행 요청</button>
+      <br />
+      <div id="request_content" style="display: none">
+        From Address<input id="from_address" class="address" type="text" />
+        <p id="to_wrap">
+          To Address<input id="to_address" class="address" type="text" />
+        </p>
+        <p id="value_wrap">Value<input id="request_value" type="number" /></p>
+        <p id="contract_wrap">Contract<input id="contract" type="text" /></p>
+        <p id="tokenId_wrap">Token Id<input id="tokenId" type="text" /></p>
+        <p id="abi_wrap">abi<input id="abi" type="text" /></p>
+        <p id="params_wrap">params<input id="params" type="text" /></p>
+        <button id="qr_request">요청</button>
+      </div>
+      <br />
+      <p id="result_content"></p>
 
-<body>
-  <div class="mainDiv">
-    <button id="auth" class="mainBtn">지갑연결</button>
-    <button id="wemix_send" class="mainBtn">Wemix 전송 요청</button>
-    <button id="token_send" class="mainBtn">Token 전송 요청</button>
-    <button id="nft_send" class="mainBtn">NFT 전송 요청</button>
-    <button id="contract_execute" class="mainBtn">Contract 실행 요청</button>
-    <br />
-    <div id="request_content" style="display: none;">
-      From Address<input id="from_address" class="address" type="text" />
-      <p id="to_wrap">To Address<input id="to_address" class="address" type="text" /></p>
-      <p id="value_wrap">Value<input id="request_value" type="number" /></p>
-      <p id="contract_wrap">Contract<input id="contract" type="text" /></p>
-      <p id="tokenId_wrap">Token Id<input id="tokenId" type="text" /></p>
-      <p id="abi_wrap">abi<input id="abi" type="text" /></p>
-      <p id="params_wrap">params<input id="params" type="text" /></p>
-      <button id="qr_request">요청</button>
-    </div>
-    <br />
-    <p id="result_content"></p>
-
-    <div id="qrcode_dialog" style="display: none;">
-      <div id="qr_content">
-        <canvas id="qrcode" style="display: block; margin: 0 auto;"></canvas>
-        <div id="qrcode_content"></div>
-        <div class="closeDiv">
-          <button id="qrCloseBtn">닫기</button>
+      <div id="qrcode_dialog" style="display: none">
+        <div id="qr_content">
+          <canvas id="qrcode" style="display: block; margin: 0 auto"></canvas>
+          <div id="qrcode_content"></div>
+          <div class="closeDiv">
+            <button id="qrCloseBtn">닫기</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script type="module" src="./index.js"></script>
-</body>
-
+    <script type="module" src="./index.js"></script>
+  </body>
 </html>
